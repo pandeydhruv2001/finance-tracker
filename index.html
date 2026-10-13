@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6f8">
+    <title>Personal Finance Tracker</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <nav class="primary-nav" aria-label="Primary">
+        <a class="primary-nav__link" href="#dashboard-panel">Dashboard</a>
+        <a class="primary-nav__link" href="#transaction-form-panel">Add transaction</a>
+        <a class="primary-nav__link" href="#transactions-panel">Transactions</a>
+      </nav>
+
+      <header class="page-heading">
+        <p class="eyebrow">Personal Finance Tracker</p>
+        <h1>Keep your money in view.</h1>
+        <p class="intro">Add an income or expense to start building your transaction history.</p>
+      </header>
+
+      <section id="dashboard-panel" class="panel dashboard-panel" aria-labelledby="dashboard-heading">
+        <div class="section-heading">
+          <p class="eyebrow">At a glance</p>
+          <h2 id="dashboard-heading">Dashboard</h2>
+        </div>
+        <div class="summary-grid" aria-live="polite" aria-atomic="true">
+          <article class="summary-card summary-card--balance">
+            <h3>Total balance</h3>
+            <p id="total-balance" class="summary-value">0</p>
+          </article>
+          <article class="summary-card summary-card--income">
+            <h3>Total income</h3>
+            <p id="total-income" class="summary-value">0</p>
+          </article>
+          <article class="summary-card summary-card--expense">
+            <h3>Total expense</h3>
+            <p id="total-expense" class="summary-value">0</p>
+          </article>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section id="transaction-form-panel" class="panel form-panel" aria-labelledby="form-heading">
+          <div class="section-heading">
+            <p id="form-eyebrow" class="eyebrow">New entry</p>
+            <h2 id="form-heading">Add a transaction</h2>
+          </div>
+
+          <form id="transaction-form" novalidate>
+            <div class="field">
+              <label for="transaction-title">Title</label>
+              <input id="transaction-title" name="title" type="text" autocomplete="off" required>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="transaction-amount">Amount</label>
+                <input id="transaction-amount" name="amount" type="number" inputmode="decimal" step="any" required>
+              </div>
+              <div class="field">
+                <label for="transaction-type">Type</label>
+                <select id="transaction-type" name="type" required>
+                  <option value="">Choose type</option>
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="transaction-category">Category</label>
+                <input id="transaction-category" name="category" type="text" autocomplete="off" required>
+              </div>
+              <div class="field">
+                <label for="transaction-date">Date</label>
+                <input id="transaction-date" name="date" type="date" required>
+              </div>
+            </div>
+
+            <p id="form-message" class="form-message" role="alert" aria-live="polite"></p>
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Add transaction</button>
+              <button id="cancel-edit-button" class="secondary-button" type="button" hidden>
+                Cancel edit
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section id="transactions-panel" class="panel transactions-panel" aria-labelledby="transactions-heading">
+          <div class="section-heading">
+            <p class="eyebrow">Your activity</p>
+            <h2 id="transactions-heading">Transactions</h2>
+          </div>
+
+          <div class="field transaction-search">
+            <label for="title-search">Search by title</label>
+            <input
+              id="title-search"
+              name="title-search"
+              type="search"
+              autocomplete="off"
+              placeholder="Search transaction titles"
+            >
+          </div>
+
+          <div class="form-row transaction-filters">
+            <div class="field">
+              <label for="type-filter">Filter by type</label>
+              <select id="type-filter" name="type-filter">
+                <option value="all">All</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="category-filter">Filter by category</label>
+              <select id="category-filter" name="category-filter">
+                <option value="">All categories</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row transaction-date-filters">
+            <div class="field">
+              <label for="date-filter">Filter by date</label>
+              <select id="date-filter" name="date-filter">
+                <option value="all">All dates</option>
+                <option value="this-month">This month</option>
+                <option value="last-month">Last month</option>
+                <option value="specific-month">Specific month</option>
+              </select>
+            </div>
+            <div id="specific-month-field" class="field" hidden>
+              <label for="month-filter">Choose month</label>
+              <input id="month-filter" name="month-filter" type="month">
+            </div>
+          </div>
+
+          <p id="storage-message" class="storage-message" role="status" aria-live="polite" hidden></p>
+          <p id="empty-state" class="empty-state" tabindex="-1">Your transactions will appear here after you add one.</p>
+          <div id="table-container" class="table-container" hidden>
+            <table>
+              <caption class="visually-hidden">Transactions you have added</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Category</th>
+                  <th id="date-sort-heading" scope="col" aria-sort="none">
+                    <button
+                      id="date-sort-button"
+                      class="sort-button"
+                      type="button"
+                      aria-label="Sort by date, latest first"
+                      aria-pressed="false"
+                    >
+                      Date <span id="date-sort-indicator" class="sort-indicator" aria-hidden="true">↕</span>
+                    </button>
+                  </th>
+                  <th id="amount-sort-heading" scope="col" aria-sort="none">
+                    <button
+                      id="amount-sort-button"
+                      class="sort-button"
+                      type="button"
+                      aria-label="Sort by amount, highest first"
+                      aria-pressed="false"
+                    >
+                      Amount <span id="amount-sort-indicator" class="sort-indicator" aria-hidden="true">↕</span>
+                    </button>
+                  </th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="transaction-rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <dialog
+      id="delete-dialog"
+      class="delete-dialog"
+      aria-labelledby="delete-dialog-title"
+      aria-describedby="delete-dialog-description delete-dialog-transaction"
+    >
+      <div class="delete-dialog-content">
+        <p class="eyebrow">Confirm deletion</p>
+        <h2 id="delete-dialog-title">Delete this transaction?</h2>
+        <p id="delete-dialog-description" class="delete-dialog-description">
+          This will remove the transaction from your list.
+        </p>
+        <p id="delete-dialog-transaction" class="delete-dialog-transaction"></p>
+        <div class="delete-dialog-actions">
+          <button id="cancel-delete-button" class="secondary-button" type="button" autofocus>
+            Cancel
+          </button>
+          <button
+            id="confirm-delete-button"
+            class="row-action-button row-action-button--danger"
+            type="button"
+          >
+            Delete transaction
+          </button>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>
